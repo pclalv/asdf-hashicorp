@@ -18,6 +18,7 @@ read_version_from_terraform_module() {
   local -r terraform_module="$(dirname "$version_file")"
   local -r required_version_constraint="$(grep --no-filename \
     --recursive \
+    --exclude-dir .terraform \
     --fixed-strings \
     required_version \
     "$terraform_module" |
