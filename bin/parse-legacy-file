@@ -13,13 +13,14 @@ is_strict_equality_version_constraint() {
   grep --quiet -E '^=?[[:digit:]]+\.[[:digit:]]+.[[:digit:]]+' <<<"${version_constraint}"
 }
 
-read_version_from_main_tf() {
+read_version_from_terraform_module() {
   local -r version_file="$1"
+  local -r terraform_module="$(dirname "$version_file")"
   local -r required_version_constraint="$(grep --no-filename \
     --recursive \
     --fixed-strings \
     required_version \
-    "${version_file}" |
+    "$terraform_module" |
     sed -E 's/[[:space:]]*required_version[[:space:]]*=//' |
     tr -d '" ')"
 
@@ -55,7 +56,7 @@ get_legacy_version() {
   if [[ ${version_file} == *".${THIS_PLUGIN}-version" && -r ${version_file} ]]; then
     cat "${version_file}"
   elif [[ ${version_file} =~ main.tf && -r ${version_file} ]]; then
-    read_version_from_main_tf "${version_file}"
+    read_version_from_terraform_module "${version_file}"
   fi
 }
 
